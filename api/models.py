@@ -21,6 +21,14 @@ PURPOSE = (
     ('sale','SALE'),
 )
 
+class Profile(models.Model):
+    username = models.CharField(max_length=128)
+    email = models.EmailField(max_length=128)
+    password = models.CharField(max_length=128)
+    
+    def __str__(self):
+        return self.email
+
 class Ad(models.Model):
     Title = models.CharField(max_length=128)
     Description = models.TextField(null=True,blank=True)
@@ -34,8 +42,11 @@ class Ad(models.Model):
     Price = models.IntegerField()
     Type = models.CharField(max_length=128,choices=TYPE_CHOICES,default='PROPERTY')
     Construction_status = models.CharField(max_length=128,choices=STATUS_CHOICES,default='COMPLETE')
+    latitude = models.FloatField(null=True)
+    longitude = models.FloatField(null=True)
     Purpose = models.CharField(max_length=128,null=True,blank=True,choices=PURPOSE,default='sale')
     User = models.ForeignKey(User,on_delete=models.CASCADE)
 
     def __str__(self):
         return self.Title
+
