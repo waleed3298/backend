@@ -9,7 +9,9 @@ router.register('users', UserViewSet)
 
 urlpatterns = [
  path('', include(router.urls)),
+ path('user/',views.GetUser.as_view()),
  path('search/',views.SearchAds.as_view()),
+ path('userinfo/',views.UserInfo.as_view()),
  path('properties/',views.PropertyDisplay.as_view()),
  path('plots/',views.PlotDisplay.as_view()),
  path('commercial/',views.CommercialDisplay.as_view()),

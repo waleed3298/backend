@@ -24,6 +24,7 @@ PURPOSE = (
 class Profile(models.Model):
     username = models.CharField(max_length=128)
     email = models.EmailField(max_length=128)
+    contact_no = models.IntegerField(null=True)
     password = models.CharField(max_length=128)
     
     def __str__(self):
@@ -49,4 +50,3 @@ class Ad(models.Model):
 
     def __str__(self):
         return self.Title
-

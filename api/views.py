@@ -23,6 +23,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class UserInfo(generics.ListAPIView):
+    serializer_class = UserSerializer
+    authentication_classes = [TokenAuthentication, ]
+    
+    def get_queryset(self):
+        return User.objects.filter(email = self.request.user.email)
+
 class SearchAds(generics.ListAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
@@ -37,6 +44,13 @@ class Dashboard(generics.ListAPIView):
     def get_queryset(self):
         return Ad.objects.filter(User=self.request.user)
 
+class GetUser(generics.ListAPIView):
+    serializer_class = UserSerializer
+    authentication_classes = [TokenAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    def get_queryset(self):
+        return User.objects.filter(email=self.request.user.email)    
+    
 class PropertyDisplay(generics.ListAPIView):
     queryset = Ad.objects.filter(Type='property')
     serializer_class = AdSerializer
@@ -44,6 +58,8 @@ class PropertyDisplay(generics.ListAPIView):
 class AdvertisementDisplay(generics.ListAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
+    filter_backends = (SearchFilter,OrderingFilter)
+    search_fields = ('Title','Location','User__username','City','Size','Price','Purpose')
 
 class PlotDisplay(generics.ListAPIView):
     queryset = Ad.objects.filter(Type='plot')
