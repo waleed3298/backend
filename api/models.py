@@ -41,17 +41,6 @@ PURPOSE = (
     ('sale','SALE'),
 )
 
-class Profile(models.Model):
-    name = models.CharField(max_length=128)
-    image = models.ImageField(default='media/api/images/person.jpg',null=True,blank=True, upload_to='media/api/images')
-    email = models.EmailField(blank=True,null=True)
-    Age=models.IntegerField(null=True)
-    contact_no = models.IntegerField(null=True)
-    user = models.OneToOneField(User,on_delete=models.CASCADE,null=True)
-    
-    def __str__(self):
-        return self.name
-    
 class Ad(models.Model):
     Title = models.CharField(max_length=128)
     Description = models.TextField(null=True,blank=True)
@@ -74,6 +63,9 @@ class Ad(models.Model):
     longitude = models.FloatField(null=True)
     Purpose = models.CharField(max_length=128,null=True,blank=True,choices=PURPOSE,default='sale')
     User = models.ForeignKey(User,on_delete=models.CASCADE)
+    contact_no = models.IntegerField(null=True,blank=True)
+    cell_no = models.IntegerField(null=True,blank=True)
+    email = models.EmailField(null=True,blank=True)
     Time = models.DateTimeField(default=now,blank=True)
     Featured = models.BooleanField(default=False)
     Views = models.IntegerField(default=0)
@@ -94,6 +86,7 @@ class Saved(models.Model):
 
 class ItemAD(models.Model):
     Title = models.CharField(max_length=128)
+    Image = models.ImageField(default='media/api/images/tools.png',null=True,blank=True, upload_to='media/api/images')
     Description = models.TextField(null=True)
     Price = models.IntegerField()
     Discounted_Price = models.IntegerField(null=True)

@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics,permissions,status,viewsets
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated,AllowAny
-from .models import Ad,Profile,Saved
-from .serializers import AdSerializer ,UserSerializer,ProfileSerializer,SavedSerializer
+from .models import Ad,Saved,ItemAD
+from .serializers import AdSerializer ,UserSerializer,SavedSerializer,ItemSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action , api_view
 from rest_framework.authentication import TokenAuthentication,SessionAuthentication
@@ -18,9 +18,9 @@ from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-
 import json
-### User Management
+
+### User Management ###
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -39,39 +39,7 @@ class GetUser(generics.ListAPIView):
     def get_queryset(self):
         return User.objects.filter(email=self.request.user.email)    
 
-### Profile Management
-class ProfileInfo(generics.ListAPIView):
-    serializer_class = ProfileSerializer
-    authentication_classes = [TokenAuthentication, ]
-    permission_classes = [IsAuthenticated, ]
-    def get_queryset(self):
-        return Profile.objects.filter(user = self.request.user)
-
-class EditProfile(generics.RetrieveUpdateAPIView):
-    serializer_class = ProfileSerializer
-    authentication_classes = [TokenAuthentication,]
-    permission_classes = [IsAuthenticated,]
-    
-    def get_queryset(self):
-        pk = self.kwargs['pk']
-        return Profile.objects.filter(user=pk)
-        
-class CreateProfile(generics.CreateAPIView):
-    serializer_class = ProfileSerializer
-    authentication_classes = [TokenAuthentication, ]
-    permission_classes = [IsAuthenticated]
-        
-    def perform_create(self,serializer):
-        serializer.save(user=self.request.user)
-        return JsonResponse({'response':'Profile Created Successfully'},status=201)
-
-class Profiles(generics.ListAPIView):
-    serializer_class = ProfileSerializer
-    authentication_classes = [TokenAuthentication,]
-    permission_classes = [IsAuthenticated]
-    queryset = Profile.objects.all()
-
-### Property Management Views
+### Property Management Views ###
 class PropertyDisplay(generics.ListAPIView):
     queryset = Ad.objects.filter(Type='property')
     serializer_class = AdSerializer
@@ -155,6 +123,16 @@ class LikedAds(generics.ListAPIView):
     permission_classes = [IsAuthenticated, ]
     def get_queryset(self):
         return Saved.objects.filter(user=self.request.user)
+
+class DeleteLiked(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = SavedSerializer
+    
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Saved.objects.filter(id=pk)
+    
+    def perform_delete(self,serializer):
+        serializer.delete()
     
 class Liked(generics.RetrieveAPIView):
     serializer_class = SavedSerializer
@@ -163,7 +141,6 @@ class Liked(generics.RetrieveAPIView):
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Saved.objects.filter(Ad=pk,user=self.request.user)
-    
      
 class LatestAds(generics.ListAPIView):
     serializer_class = AdSerializer
@@ -174,3 +151,56 @@ class MostViewed(generics.ListAPIView):
 class Featured(generics.ListAPIView):
     serializer_class = AdSerializer
     queryset = Ad.objects.filter(Featured=True).order_by('id')[:6]
+    
+### e-Commerce Views ###
+class Items(generics.ListAPIView):
+    serializer_class = ItemSerializer
+    authentication_classes = [TokenAuthentication,]
+    permission_class = [IsAuthenticated,]
+    queryset = ItemAD.objects.all()
+
+class DashboardItems(generics.ListAPIView):
+    serializer_class = ItemSerializer
+    authentication_classes = [TokenAuthentication,]
+    permission_class = [IsAuthenticated,]
+    def get_queryset(self):
+        return ItemAD.objects.filter(user=self.request.user)
+        
+class CreateItem(generics.CreateAPIView):
+    serializer_class = ItemSerializer
+    authentication_classes = [TokenAuthentication,]
+    permission_class = [IsAuthenticated,]
+    
+    def perform_create(self,serializer):
+        serializer.save(user=self.request.user)
+        return JsonResponse({'response':'Item Added Successfully'},status=201)
+
+    
+class EditItem(generics.RetrieveUpdateAPIView):
+    serializer_class = ItemSerializer
+    authentication_classes = [TokenAuthentication,]
+    permission_class = [IsAuthenticated,]
+    
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return ItemAD.objects.filter(id=pk,user=self.request.user)
+
+class DeleteItem(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ItemSerializer
+    authentication_classes = [TokenAuthentication,]
+    permission_class = [IsAuthenticated,]
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return ItemAD.objects.filter(id=pk,user=self.request.user)
+    def perform_delete(self,serializer):
+        serializer.delete()
+
+class ItemDisplay(generics.RetrieveAPIView):
+    serializer_class = AdSerializer
+    authentication_classes = [TokenAuthentication,]
+    permission_class = [IsAuthenticated,]
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Ad.objects.filter(id=pk)
+                                                                                    

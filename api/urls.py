@@ -11,10 +11,6 @@ urlpatterns = [
  path('', include(router.urls)),
  path('user/',views.GetUser.as_view()),
  path('userinfo/',views.UserInfo.as_view()),
- path('profile/',views.ProfileInfo.as_view()),
- path('editprofile/<int:pk>/',views.EditProfile.as_view()),
- path('profiles/',views.Profiles.as_view()),
- path('createProfile/',views.CreateProfile.as_view()),
  ### Property Management 
  path('properties/',views.PropertyDisplay.as_view()),
  path('plots/',views.PlotDisplay.as_view()),
@@ -29,7 +25,15 @@ urlpatterns = [
  path('Like/',views.CreateLike.as_view()),
  path('LikedAds/',views.LikedAds.as_view()),
  path('Liked/<str:pk>/',views.Liked.as_view()),
+ path('Unlike/<int:pk>/',views.DeleteLiked.as_view()),
  path('Latest/',views.LatestAds.as_view()),
  path('MostViewed/',views.MostViewed.as_view()),
  path('Featured/',views.Featured.as_view()),
+ ### e-Commerce Items
+ path('CreateItem/',views.CreateItem.as_view()),
+ path('EditItem/<int:pk>/',views.EditItem.as_view()),
+ path('DeleteItem/<int:pk>',views.DeleteItem.as_view()),
+ path('ItemDetails/',views.ItemDisplay.as_view()),
+ path('Items/',views.Items.as_view()),
+ path('DashboardItems/',views.DashboardItems.as_view()),
  ]
