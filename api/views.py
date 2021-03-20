@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics,permissions,status,viewsets
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated,AllowAny
-from .models import Ad,Saved,ItemAD
-from .serializers import AdSerializer ,UserSerializer,SavedSerializer,ItemSerializer
+from .models import Ad,Saved,Blog,PriceIndex,YearlyIndices
+from .serializers import AdSerializer ,UserSerializer,SavedSerializer,BlogSerializer,PriceIndexSerializer,YearlySerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action , api_view
 from rest_framework.authentication import TokenAuthentication,SessionAuthentication
@@ -152,55 +152,31 @@ class Featured(generics.ListAPIView):
     serializer_class = AdSerializer
     queryset = Ad.objects.filter(Featured=True).order_by('id')[:6]
     
-### e-Commerce Views ###
-class Items(generics.ListAPIView):
-    serializer_class = ItemSerializer
-    authentication_classes = [TokenAuthentication,]
-    permission_class = [IsAuthenticated,]
-    queryset = ItemAD.objects.all()
-
-class DashboardItems(generics.ListAPIView):
-    serializer_class = ItemSerializer
-    authentication_classes = [TokenAuthentication,]
-    permission_class = [IsAuthenticated,]
-    def get_queryset(self):
-        return ItemAD.objects.filter(user=self.request.user)
-        
-class CreateItem(generics.CreateAPIView):
-    serializer_class = ItemSerializer
-    authentication_classes = [TokenAuthentication,]
-    permission_class = [IsAuthenticated,]
+class ListBlogs(generics.ListAPIView):
+    serializer_class = BlogSerializer
+    queryset = Blog.objects.all()
     
-    def perform_create(self,serializer):
-        serializer.save(user=self.request.user)
-        return JsonResponse({'response':'Item Added Successfully'},status=201)
-
-    
-class EditItem(generics.RetrieveUpdateAPIView):
-    serializer_class = ItemSerializer
-    authentication_classes = [TokenAuthentication,]
-    permission_class = [IsAuthenticated,]
-    
+class BlogDetails(generics.RetrieveAPIView):
+    serializer_class = BlogSerializer
     def get_queryset(self):
         pk = self.kwargs['pk']
-        return ItemAD.objects.filter(id=pk,user=self.request.user)
+        return Blog.objects.filter(id=pk)
 
-class DeleteItem(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ItemSerializer
-    authentication_classes = [TokenAuthentication,]
-    permission_class = [IsAuthenticated,]
+class PriceIndex(generics.ListAPIView):
+    serializer_class = PriceIndexSerializer
+    queryset = PriceIndex.objects.all()
+class CityIndex(generics.RetrieveAPIView):
+    serializer_class = PriceIndexSerializer
     def get_queryset(self):
         pk = self.kwargs['pk']
-        return ItemAD.objects.filter(id=pk,user=self.request.user)
-    def perform_delete(self,serializer):
-        serializer.delete()
+        return PriceIndex.objects.filter(id=pk)
 
-class ItemDisplay(generics.RetrieveAPIView):
-    serializer_class = AdSerializer
-    authentication_classes = [TokenAuthentication,]
-    permission_class = [IsAuthenticated,]
-
+class CitySpecificIndex(generics.RetrieveAPIView):
+    serializer_class = YearlySerializer
     def get_queryset(self):
         pk = self.kwargs['pk']
-        return Ad.objects.filter(id=pk)
-                                                                                    
+        return YearlyIndices.objects.filter(id=pk)
+
+class CityAllIndex(generics.ListAPIView):
+    serializer_class = YearlySerializer
+    queryset = YearlyIndices.objects.all()

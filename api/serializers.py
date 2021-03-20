@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Ad,Saved,ItemAD
+from .models import Ad,Saved,Product,OrderItem,Order,Review,ShippingAddress,PriceIndex,Blog,YearlyIndices
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -36,8 +36,41 @@ class SavedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Saved
         fields = ['id','Ad','Title','Price']
-        
-class ItemSerializer(serializers.ModelSerializer):
+           
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ItemAD
-        fields = ['id','Title','Image','Description','Price','Discounted_Price','Category','Type','Additional_specifications']
+        model = Product
+        fields = '__all__'
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'
+        
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = '__all__'
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+class ShippingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShippingAddress
+        fields = '__all__'
+
+class PriceIndexSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PriceIndex
+        fields = '__all__'
+class BlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Blog
+        fields = '__all__'
+class YearlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = YearlyIndices
+        fields = '__all__'

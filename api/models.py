@@ -31,6 +31,8 @@ TYPE_CHOICES = (
     ('property','PROPERTY'),
     ('plot', 'PLOT'),
     ('commercial', 'COMMERCIAL'),
+    ('flat','FLAT'),
+    ('penthouse','PENTHOUSE'),
 )
 STATUS_CHOICES = (
     ('complete','COMPLETE'),
@@ -83,17 +85,113 @@ class Saved(models.Model):
     class Meta:
         unique_together = (('user','Ad'),)
         index_together = (('user','Ad'),)
-
-class ItemAD(models.Model):
-    Title = models.CharField(max_length=128)
-    Image = models.ImageField(default='media/api/images/tools.png',null=True,blank=True, upload_to='media/api/images')
-    Description = models.TextField(null=True)
-    Price = models.IntegerField()
-    Discounted_Price = models.IntegerField(null=True)
-    Category = models.CharField(max_length=128,choices=CATEGORIES,default='construction_tools')
-    Type = models.CharField(max_length=128)
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    Additional_specifications = models.CharField(max_length=128,null=True)
+class PriceIndex(models.Model):
+    City = models.CharField(max_length=128,blank=False,null=False)
+    Price_to_income = models.FloatField(blank=True,null=True)
+    Mortgage_interest_ratio = models.FloatField(blank=True,null=True)
+    Price_to_rent = models.FloatField(blank=True,null=True)
+    rental_yield = models.FloatField(blank=True,null=True)
+    Price_per_sqr_mtr = models.FloatField(blank=True,null=True)
     
     def __str__(self):
+        return self.City
+class YearlyIndices(models.Model):
+    City = models.CharField(max_length=128,blank=False,null=False)
+    y_2013 = models.FloatField(blank=True,null=True)
+    y_2014 = models.FloatField(blank=True,null=True)
+    y_2015 = models.FloatField(blank=True,null=True)
+    y_2016 = models.FloatField(blank=True,null=True)
+    y_2017 = models.FloatField(blank=True,null=True)
+    y_2018 = models.FloatField(blank=True,null=True)
+    y_2019 = models.FloatField(blank=True,null=True)
+    y_2020 = models.FloatField(blank=True,null=True)
+    y_2021 = models.FloatField(blank=True,null=True)
+    
+    def __str__(self):
+        return self.City
+    
+class Product(models.Model):
+    User = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    Title = models.CharField(max_length=200, null=True, blank=True)
+    Image = models.ImageField(null=True, blank=True,
+                              default='/placeholder.png')
+    Brand = models.CharField(max_length=200, null=True, blank=True)
+    Category = models.CharField(max_length=200,choices=CATEGORIES,default="ELECTRIC")
+    Description = models.TextField(null=True, blank=True)
+    Rating = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True)
+    NumReviews = models.IntegerField(null=True, blank=True, default=0)
+    Price = models.DecimalField(
+        max_digits=7, decimal_places=2, null=True, blank=True)
+    countInStock = models.IntegerField(null=True, blank=True, default=0)
+    CreatedAt = models.DateTimeField(auto_now_add=True)
+    _id = models.AutoField(primary_key=True, editable=False)
+
+    def __str__(self):
         return self.Title
+    
+class Review(models.Model):
+    Product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    User = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    Name = models.CharField(max_length=200, null=True, blank=True)
+    Rating = models.IntegerField(null=True, blank=True, default=0)
+    Comment = models.TextField(null=True, blank=True)
+    CreatedAt = models.DateTimeField(auto_now_add=True)
+    _id = models.AutoField(primary_key=True, editable=False)
+
+    def __str__(self):
+        return str(self.rating)
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    paymentMethod = models.CharField(max_length=200, null=True, blank=True)
+    taxPrice = models.DecimalField(
+        max_digits=7, decimal_places=2, null=True, blank=True)
+    shippingPrice = models.DecimalField(
+        max_digits=7, decimal_places=2, null=True, blank=True)
+    totalPrice = models.DecimalField(
+        max_digits=7, decimal_places=2, null=True, blank=True)
+    isPaid = models.BooleanField(default=False)
+    paidAt = models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    isDelivered = models.BooleanField(default=False)
+    deliveredAt = models.DateTimeField(
+        auto_now_add=False, null=True, blank=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    _id = models.AutoField(primary_key=True, editable=False)
+
+    def __str__(self):
+        return str(self.createdAt)
+class OrderItem(models.Model):
+    Product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    Order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    Name = models.CharField(max_length=200, null=True, blank=True)
+    Qty = models.IntegerField(null=True, blank=True, default=0)
+    Price = models.DecimalField(
+        max_digits=7, decimal_places=2, null=True, blank=True)
+    Image = models.CharField(max_length=200, null=True, blank=True)
+    _id = models.AutoField(primary_key=True, editable=False)
+
+    def __str__(self):
+        return str(self.name)
+
+class Blog(models.Model):
+    Title = models.CharField(max_length=128,null=False,blank=False)
+    Title_image = models.ImageField(default=None,null=True,blank=True, upload_to='media/api/images')
+    content=models.TextField(null=False,blank=False)
+    genre = models.CharField(max_length=128,null=False,blank=False,default=None)
+    extra_image1 = models.ImageField(default=None,null=True,blank=True, upload_to='media/api/images')
+    extra_image2 = models.ImageField(default=None,null=True,blank=True, upload_to='media/api/images')
+    extra_image3 = models.ImageField(default=None,null=True,blank=True, upload_to='media/api/images')
+    
+class ShippingAddress(models.Model):
+    Order = models.OneToOneField(
+        Order, on_delete=models.CASCADE, null=True, blank=True)
+    Address = models.CharField(max_length=200, null=True, blank=True)
+    City = models.CharField(max_length=200, null=True, blank=True)
+    PostalCode = models.CharField(max_length=200, null=True, blank=True)
+    Country = models.CharField(max_length=200, null=True, blank=True)
+    ShippingPrice = models.DecimalField(
+        max_digits=7, decimal_places=2, null=True, blank=True)
+    _id = models.AutoField(primary_key=True, editable=False)
+
+    def __str__(self):
+        return str(self.address)

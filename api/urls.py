@@ -29,11 +29,10 @@ urlpatterns = [
  path('Latest/',views.LatestAds.as_view()),
  path('MostViewed/',views.MostViewed.as_view()),
  path('Featured/',views.Featured.as_view()),
- ### e-Commerce Items
- path('CreateItem/',views.CreateItem.as_view()),
- path('EditItem/<int:pk>/',views.EditItem.as_view()),
- path('DeleteItem/<int:pk>',views.DeleteItem.as_view()),
- path('ItemDetails/',views.ItemDisplay.as_view()),
- path('Items/',views.Items.as_view()),
- path('DashboardItems/',views.DashboardItems.as_view()),
- ]
+ path('Blogs/',views.ListBlogs.as_view()),
+ path('Blog/<int:pk>',views.BlogDetails.as_view()),
+ path('PriceIndex/',views.PriceIndex.as_view()),
+ path('CityIndex/<int:pk>',views.CityIndex.as_view()),
+ path('City/<int:pk>/',views.CitySpecificIndex.as_view()),
+ path('Cities/',views.CityAllIndex.as_view()),
+  ]
