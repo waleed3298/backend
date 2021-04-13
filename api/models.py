@@ -118,29 +118,47 @@ class Product(models.Model):
     Brand = models.CharField(max_length=200, null=True, blank=True)
     Category = models.CharField(max_length=200,choices=CATEGORIES,default="ELECTRIC")
     Description = models.TextField(null=True, blank=True)
-    Rating = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True, blank=True)
-    NumReviews = models.IntegerField(null=True, blank=True, default=0)
     Price = models.DecimalField(
         max_digits=7, decimal_places=2, null=True, blank=True)
     countInStock = models.IntegerField(null=True, blank=True, default=0)
     CreatedAt = models.DateTimeField(auto_now_add=True)
     _id = models.AutoField(primary_key=True, editable=False)
 
+    def no_of_reviews(self):
+        review = Review.objects.filter(Product=self)
+        return len(review)
+    
+    def avg_rating(self):
+        sum = 0
+        ratings = Review.objects.filter(Product=self)
+        for rating in ratings:
+            sum+= rating.Rating
+            
+        if len(ratings)>0:
+            avg = sum / len(ratings)
+            return round(avg,1)
+        else:
+            return 0
+ 
     def __str__(self):
         return self.Title
     
 class Review(models.Model):
-    Product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    User = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     Name = models.CharField(max_length=200, null=True, blank=True)
-    Rating = models.IntegerField(null=True, blank=True, default=0)
+    Rating = models.FloatField(null=True, blank=True, default=0)
     Comment = models.TextField(null=True, blank=True)
     CreatedAt = models.DateTimeField(auto_now_add=True)
     _id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):
-        return str(self.rating)
+        return str(self.Product)
+    
+    class Meta:
+        unique_together = (('user','Product'),)
+        index_together = (('user','Product'),)
+        
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     paymentMethod = models.CharField(max_length=200, null=True, blank=True)

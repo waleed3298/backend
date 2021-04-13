@@ -40,7 +40,7 @@ class SavedSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = ['_id','Title','Image','Brand','Category','Description','Price','countInStock','avg_rating','no_of_reviews']
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,7 +55,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ['Product','Name','Rating','Comment','CreatedAt']
 
 class ShippingSerializer(serializers.ModelSerializer):
     class Meta:

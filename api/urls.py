@@ -35,4 +35,8 @@ urlpatterns = [
  path('CityIndex/<int:pk>',views.CityIndex.as_view()),
  path('City/<int:pk>/',views.CitySpecificIndex.as_view()),
  path('Cities/',views.CityAllIndex.as_view()),
+ path('Products/',views.Products.as_view()),
+ path('Product/<int:pk>/',views.ProductDisplay.as_view()),
+ path('Rating/<int:pk>/',views.RatingDisplay.as_view()),
+ path('CreateRating/',views.CreateRating.as_view()),
   ]

@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics,permissions,status,viewsets
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated,AllowAny
-from .models import Ad,Saved,Blog,PriceIndex,YearlyIndices
-from .serializers import AdSerializer ,UserSerializer,SavedSerializer,BlogSerializer,PriceIndexSerializer,YearlySerializer
+from .models import Ad,Saved,Blog,PriceIndex,YearlyIndices,Product,Review
+from .serializers import AdSerializer ,UserSerializer,SavedSerializer,BlogSerializer,PriceIndexSerializer,YearlySerializer,ProductSerializer,RatingSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action , api_view
 from rest_framework.authentication import TokenAuthentication,SessionAuthentication
@@ -180,3 +180,30 @@ class CitySpecificIndex(generics.RetrieveAPIView):
 class CityAllIndex(generics.ListAPIView):
     serializer_class = YearlySerializer
     queryset = YearlyIndices.objects.all()
+
+class Products(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+    
+class ProductDisplay(generics.RetrieveAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Product.objects.filter(_id=pk)
+        return Review.objects.filter(Product=pk)
+
+class RatingDisplay(generics.ListAPIView):
+    serializer_class = RatingSerializer
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Review.objects.filter(Product=pk)
+
+class CreateRating(generics.CreateAPIView):
+    serializer_class = RatingSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def perform_create(self,serializer):
+        serializer.save(user=self.request.user)
+        return JsonResponse({'response':'Review Saved Successfully'},status=201)
