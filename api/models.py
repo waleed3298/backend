@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 import datetime
+
 ### e-Commerce Options
 CATEGORIES = (
     ("electric", "ELECTRIC"),
@@ -41,6 +42,20 @@ PURPOSE = (
     ("rent", "RENT"),
     ("sale", "SALE"),
 )
+
+GENDER_CHOICES = (
+    ("male", "MALE"),
+    ("female", "FEMALE"),
+)
+
+
+class Profile(models.Model):
+    Full_Name = models.CharField(max_length=128, null=False)
+    Gender = models.CharField(max_length=128, choices=GENDER_CHOICES, default="MALE")
+    Age = models.IntegerField(null=True)
+    CNIC = models.IntegerField(null=True)
+    Ad_quantity = models.IntegerField(null=False, default="4")
+    User = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
 
 class Ad(models.Model):
@@ -155,16 +170,15 @@ class YearlyIndices(models.Model):
     def __str__(self):
         return self.City
 
+
 class Product(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200, null=True, blank=True)
-    image = models.ImageField(null=True, blank=True,
-                              default='/placeholder.png')
+    image = models.ImageField(null=True, blank=True, default="/placeholder.png")
     brand = models.CharField(max_length=200, null=True, blank=True)
     category = models.CharField(max_length=200, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    price = models.DecimalField(
-        max_digits=7, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     countInStock = models.IntegerField(null=True, blank=True, default=0)
     createdAt = models.DateTimeField(auto_now_add=True)
     _id = models.AutoField(primary_key=True, editable=False)
@@ -188,6 +202,7 @@ class Product(models.Model):
         else:
             return 0
 
+
 class Review(models.Model):
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -197,30 +212,32 @@ class Review(models.Model):
     CreatedAt = models.DateTimeField(auto_now_add=True)
     _id = models.AutoField(primary_key=True, editable=False)
 
-    #def __str__(self):
-        #return str(self.Product)
-    
+    # def __str__(self):
+    # return str(self.Product)
+
     class Meta:
-        unique_together = (('user','Product'),)
-        index_together = (('user','Product'),)
+        unique_together = (("user", "Product"),)
+        index_together = (("user", "Product"),)
 
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     paymentMethod = models.CharField(max_length=200, null=True, blank=True)
     taxPrice = models.DecimalField(
-        max_digits=7, decimal_places=2, null=True, blank=True)
+        max_digits=7, decimal_places=2, null=True, blank=True
+    )
     shippingPrice = models.DecimalField(
-        max_digits=7, decimal_places=2, null=True, blank=True)
+        max_digits=7, decimal_places=2, null=True, blank=True
+    )
     totalPrice = models.DecimalField(
-        max_digits=7, decimal_places=2, null=True, blank=True)
+        max_digits=7, decimal_places=2, null=True, blank=True
+    )
     isPaid = models.BooleanField(default=False)
     paidAt = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     isDelivered = models.BooleanField(default=False)
-    deliveredAt = models.DateTimeField(
-        auto_now_add=False, null=True, blank=True)
+    deliveredAt = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     createdAtDate = models.DateField(default=datetime.date.today)
-    createdAtTime = models.TimeField(auto_now_add=True,null=True)
+    createdAtTime = models.TimeField(auto_now_add=True, null=True)
     _id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):
@@ -230,10 +247,9 @@ class Order(models.Model):
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=128,null=True)
+    name = models.CharField(max_length=128, null=True)
     qty = models.IntegerField(null=True, blank=True, default=0)
-    price = models.DecimalField(
-        max_digits=7, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     image = models.CharField(max_length=200, null=True, blank=True)
     _id = models.AutoField(primary_key=True, editable=False)
 
@@ -242,14 +258,14 @@ class OrderItem(models.Model):
 
 
 class ShippingAddress(models.Model):
-    order = models.OneToOneField(
-        Order, on_delete=models.CASCADE, null=True, blank=True)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
     city = models.CharField(max_length=200, null=True, blank=True)
     postalCode = models.CharField(max_length=200, null=True, blank=True)
     country = models.CharField(max_length=200, null=True, blank=True)
     shippingPrice = models.DecimalField(
-        max_digits=7, decimal_places=2, null=True, blank=True)
+        max_digits=7, decimal_places=2, null=True, blank=True
+    )
     _id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):

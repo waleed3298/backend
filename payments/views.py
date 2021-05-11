@@ -5,14 +5,15 @@ from rest_framework import status
 import stripe
 import json
 from django.views.decorators.csrf import csrf_exempt
-
+import math
 stripe.api_key = "sk_test_51HpEAFBvgj2EIc8TcbG48FSuuMtpy9nDxKSIjM7qRnoRTRKg9UduHwAFyKTnVgIPwIhrf4W2enAhpY0tGVoSbvak00DkE8kEup"
 
 
 @api_view(["POST"])
 def test_payment(request):
+    data = request.data
     test_payment_intent = stripe.PaymentIntent.create(
-        amount=1000,
+        amount=math.trunc(data['amount']),
         currency="pln",
         payment_method_types=["card"],
         receipt_email="test@example.com",
@@ -40,7 +41,7 @@ def save_stripe_info(request):
         customer=customer,
         payment_method=payment_method_id,
         currency="pkr",  # you can provide any currency you want
-        amount=99999,
+        amount=math.trunc(data['amount']),
         confirm=True,
     )
     return Response(

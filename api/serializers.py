@@ -10,6 +10,7 @@ from .models import (
     PriceIndex,
     Blog,
     YearlyIndices,
+    Profile,
 )
 from django.contrib.auth.models import User
 
@@ -101,7 +102,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = "__all__"
 
     def get_orderItems(self, obj):
         items = obj.orderitem_set.all()
@@ -110,8 +111,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def get_shippingAddress(self, obj):
         try:
-            address = ShippingSerializer(
-            obj.shippingaddress, many=False).data
+            address = ShippingSerializer(obj.shippingaddress, many=False).data
         except:
             address = "Unknown"
         return address
@@ -120,7 +120,7 @@ class OrderSerializer(serializers.ModelSerializer):
         user = obj.user
         serializer = UserSerializer(user, many=False)
         return serializer.data
-    
+
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -156,3 +156,9 @@ class YearlySerializer(serializers.ModelSerializer):
     class Meta:
         model = YearlyIndices
         fields = "__all__"
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["id", "Full_Name", "Gender", "Age", "CNIC", "Ad_quantity"]

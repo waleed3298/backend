@@ -9,5 +9,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
     path("payments/", include("payments.urls")),
-    path("auth/", obtain_auth_token),
+    path("token/", obtain_auth_token),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
