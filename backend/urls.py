@@ -10,4 +10,6 @@ urlpatterns = [
     path("api/", include("api.urls")),
     path("payments/", include("payments.urls")),
     path("token/", obtain_auth_token),
+    path('chat/',include("chat.urls")),
+    path('auth/',include('users.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
