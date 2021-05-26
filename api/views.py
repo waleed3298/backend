@@ -9,7 +9,7 @@ from rest_framework.decorators import (
 )
 import pickle
 from django.http import HttpResponse, JsonResponse
-
+from django_filters.rest_framework import DjangoFilterBackend
 from datetime import datetime
 
 from .models import (
@@ -28,6 +28,7 @@ from .models import (
 from .serializers import (
     AdSerializer,
     UserSerializer,
+    AdDetailSerializer,
     SavedSerializer,
     BlogSerializer,
     PriceIndexSerializer,
@@ -55,6 +56,23 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 import json
 from rest_framework.views import APIView
+from walkscore import WalkScoreAPI
+
+### Walkscore API
+class GetWalkscore(APIView):
+    def post(self, request):
+        api_key = "ffd1c56f9abcf84872116b4cc2dfcf31"
+        walkscore_api = WalkScoreAPI(api_key=api_key)
+        data = request.data
+        address = "New York City, USA"
+        result = walkscore_api.get_walk_score(
+            latitude=37.0902, longitude=95.7129, address=address
+        )
+        score = result.walk_score
+        print(result.transit_score)
+        print(result.bike_score)
+        return HttpResponse(result, score)
+
 
 ### Prediction Model
 class predictions(APIView):
@@ -143,7 +161,7 @@ class predictions(APIView):
                 "1",
             ]
         ]
-        filename = "api/Saved_models/finalized_model.sav"
+        filename = "api/Saved_models/new_model.sav"
         loaded_model = pickle.load(open(filename, "rb"))
         result = loaded_model.predict(test)[0]
         return HttpResponse(int(result))
@@ -187,20 +205,18 @@ class PropertyDisplay(generics.ListAPIView):
 class AdvertisementDisplay(generics.ListAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
-    filter_backends = (SearchFilter, OrderingFilter)
-    search_fields = (
-        "^Location",
-        "=User__username",
-        "^City",
-        "=Size",
-        "=Units",
-        "=Price",
-        "=Purpose",
-        "=Type",
-        "=Construction_status",
-        "=Beds",
-        "=Baths",
-    )
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = [
+        "Location",
+        "City",
+        "Price",
+        "Type",
+        "Beds",
+        "Baths",
+        "Construction_status",
+        "Purpose",
+        "Units",
+    ]
 
 
 class SearchAds(generics.ListAPIView):
@@ -278,7 +294,7 @@ class CreateAd(generics.CreateAPIView):
 
 
 class AdDisplay(generics.RetrieveAPIView):
-    serializer_class = AdSerializer
+    serializer_class = AdDetailSerializer
 
     def get_queryset(self):
         pk = self.kwargs["pk"]
@@ -527,6 +543,14 @@ class Orders(generics.ListAPIView):
     queryset = Order.objects.all()
 
 
+class UpdateOrder(generics.RetrieveUpdateAPIView):
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs["pk"]
+        return Order.objects.filter(_id=pk)
+
+
 class CreateOrderItems(generics.CreateAPIView):
     serializer_class = OrderItemSerializer
     authentication_classes = [
@@ -708,11 +732,29 @@ class MyProfile(generics.ListAPIView):
         return Profile.objects.filter(User=self.request.user)
 
 
-class UpdateProfile(generics.UpdateAPIView):
+class UpdateProfile(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
 
     def get_queryset(self):
         pk = self.kwargs["pk"]
         return Profile.objects.filter(id=pk)
+
+
+class GetProfile(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs["pk"]
+        return User.objects.filter(id=pk)
+
+
+class Profiles(generics.ListAPIView):
+    serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
+
+
+class ProductSearch(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["name", "brand", "price", "category"]

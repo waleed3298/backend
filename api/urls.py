@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf.urls import include
 from . import views
 from rest_framework import routers
-from .views import UserViewSet
+from .views import ProductSearch, UpdateOrder, UserViewSet
 
 router = routers.DefaultRouter()
 router.register("users", UserViewSet)
@@ -13,12 +13,15 @@ urlpatterns = [
     path("userinfo/", views.UserInfo.as_view()),
     ### Profile Management
     path("CreateProfile/", views.CreateProfile.as_view()),
-    path("UpdateProfile/<str:pk>/", views.UpdateProfile.as_view()),
+    path("UpdateProfile/<int:pk>/", views.UpdateProfile.as_view()),
     path("myProfile/", views.MyProfile.as_view()),
+    path("Profiles/", views.Profiles.as_view()),
+    path("GetProfile/<int:pk>/", views.GetProfile.as_view()),
     ### Property Management
     path("properties/", views.PropertyDisplay.as_view()),  # GET Method
     path("plots/", views.PlotDisplay.as_view()),  # GET Method
     path("commercial/", views.CommercialDisplay.as_view()),  # GET Method
+    path("walkscore/", views.GetWalkscore.as_view()),  # GET Method
     path(
         "CreateAd/", views.CreateAd.as_view()
     ),  # POST Method, Headers->Token, Body->Data
@@ -46,6 +49,7 @@ urlpatterns = [
     path("Cities/", views.CityAllIndex.as_view()),
     ### Products
     path("Products/", views.Products.as_view()),  # GET Method for list of all products
+    path("productSearch/", views.ProductSearch.as_view()),
     path(
         "Product/<int:pk>/", views.ProductDisplay.as_view()
     ),  # GET Method for a specific product
@@ -68,6 +72,7 @@ urlpatterns = [
     ),  # POST Method for deleting rating
     ### Order and Order Items
     path("CreateOrder/", views.CreateOrder.as_view()),
+    path("UpdateOrder/<int:pk>/", views.UpdateOrder.as_view()),
     path("OrderDetails/<int:pk>/", views.OrderDetails.as_view()),
     path("CreateOrderItem/", views.CreateOrderItems.as_view()),
     path("Orders/", views.Orders.as_view()),
@@ -91,4 +96,6 @@ urlpatterns = [
     path("orders/<str:pk>/pay/", views.updateOrderToPaid, name="pay"),
     ### ML model
     path("model/", views.predictions.as_view()),
+    path("Blogs/", views.ListBlogs.as_view()),
+    path("Blog/<int:pk>/", views.BlogDetails.as_view()),
 ]

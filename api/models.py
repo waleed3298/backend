@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 import datetime
+import json
 
 ### e-Commerce Options
 CATEGORIES = (
@@ -114,9 +115,6 @@ class Ad(models.Model):
         max_length=128, null=True, blank=True, choices=PURPOSE, default="sale"
     )
     User = models.ForeignKey(User, on_delete=models.CASCADE)
-    contact_no = models.IntegerField(null=True, blank=True)
-    cell_no = models.IntegerField(null=True, blank=True)
-    email = models.EmailField(null=True, blank=True)
     Time = models.DateTimeField(default=now, blank=True)
     Featured = models.BooleanField(default=False)
     Views = models.IntegerField(default=0)
@@ -124,6 +122,14 @@ class Ad(models.Model):
 
     def __str__(self):
         return self.Title
+
+    def username(self):
+        user = User.objects.filter(id=self.User.id)
+        return user[0].username
+
+    def email(self):
+        user = User.objects.filter(id=self.User.id)
+        return user[0].email
 
 
 class Saved(models.Model):
@@ -277,8 +283,22 @@ class Blog(models.Model):
     Title_image = models.ImageField(
         default=None, null=True, blank=True, upload_to="media/api/images"
     )
-    content = models.TextField(null=False, blank=False)
+    para0 = models.TextField(null=True, blank=True)
+    para1 = models.TextField(null=True, blank=True)
+    para2 = models.TextField(null=True, blank=True)
+    para3 = models.TextField(null=True, blank=True)
+    para4 = models.TextField(null=True, blank=True)
+    para5 = models.TextField(null=True, blank=True)
+    para6 = models.TextField(null=True, blank=True)
+    para7 = models.TextField(null=True, blank=True)
     genre = models.CharField(max_length=128, null=False, blank=False, default=None)
+    subheading1 = models.CharField(max_length=128, null=True, blank=True)
+    subheading2 = models.CharField(max_length=128, null=True, blank=True)
+    subheading3 = models.CharField(max_length=128, null=True, blank=True)
+    subheading4 = models.CharField(max_length=128, null=True, blank=True)
+    subheading5 = models.CharField(max_length=128, null=True, blank=True)
+    subheading6 = models.CharField(max_length=128, null=True, blank=True)
+    subheading7 = models.CharField(max_length=128, null=True, blank=True)
     extra_image1 = models.ImageField(
         default=None, null=True, blank=True, upload_to="media/api/images"
     )
@@ -288,3 +308,6 @@ class Blog(models.Model):
     extra_image3 = models.ImageField(
         default=None, null=True, blank=True, upload_to="media/api/images"
     )
+
+    def __str__(self):
+        return self.Title

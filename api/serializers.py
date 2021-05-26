@@ -66,8 +66,39 @@ class AdSerializer(serializers.ModelSerializer):
             "Views",
             "Featured",
             "Time",
-            "contact_no",
-            "cell_no",
+        ]
+
+
+class AdDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ad
+        fields = [
+            "id",
+            "Title",
+            "Image",
+            "Description",
+            "Price",
+            "Size",
+            "Units",
+            "Beds",
+            "Baths",
+            "Construction_status",
+            "Image1",
+            "Image2",
+            "Image3",
+            "Image4",
+            "Image5",
+            "City",
+            "Location",
+            "Purpose",
+            "Type",
+            "latitude",
+            "longitude",
+            "Views",
+            "Featured",
+            "Time",
+            "User",
+            "username",
             "email",
         ]
 
