@@ -44,6 +44,7 @@ urlpatterns = [
     path("Blogs/", views.ListBlogs.as_view()),
     path("Blog/<int:pk>", views.BlogDetails.as_view()),
     path("PriceIndex/", views.PriceIndex.as_view()),
+    path("Indices/", views.Indices.as_view()),
     path("CityIndex/<int:pk>", views.CityIndex.as_view()),
     path("City/<int:pk>/", views.CitySpecificIndex.as_view()),
     path("Cities/", views.CityAllIndex.as_view()),

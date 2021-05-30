@@ -177,6 +177,15 @@ class YearlyIndices(models.Model):
         return self.City
 
 
+class Indices(models.Model):
+    City = models.CharField(max_length=128, blank=False, null=False)
+    year = models.IntegerField(blank=False, null=False)
+    index = models.FloatField(blank=False, null=False)
+
+    def __str__(self):
+        return self.City
+
+
 class Product(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200, null=True, blank=True)

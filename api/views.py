@@ -19,6 +19,7 @@ from .models import (
     PriceIndex,
     YearlyIndices,
     Product,
+    Indices,
     Review,
     Order,
     OrderItem,
@@ -35,6 +36,7 @@ from .serializers import (
     YearlySerializer,
     ProductSerializer,
     RatingSerializer,
+    IndicesSerializer,
     OrderSerializer,
     OrderItemSerializer,
     ShippingSerializer,
@@ -406,6 +408,15 @@ class BlogDetails(generics.RetrieveAPIView):
 class PriceIndex(generics.ListAPIView):
     serializer_class = PriceIndexSerializer
     queryset = PriceIndex.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["City"]
+
+
+class Indices(generics.ListAPIView):
+    serializer_class = IndicesSerializer
+    queryset = Indices.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["City"]
 
 
 class CityIndex(generics.RetrieveAPIView):

@@ -6,6 +6,7 @@ from .models import (
     OrderItem,
     Order,
     Review,
+    Indices,
     ShippingAddress,
     PriceIndex,
     Blog,
@@ -174,6 +175,12 @@ class ShippingSerializer(serializers.ModelSerializer):
 class PriceIndexSerializer(serializers.ModelSerializer):
     class Meta:
         model = PriceIndex
+        fields = "__all__"
+
+
+class IndicesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Indices
         fields = "__all__"
 
 
