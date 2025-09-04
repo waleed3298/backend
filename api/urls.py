@@ -21,7 +21,7 @@ urlpatterns = [
     path("properties/", views.PropertyDisplay.as_view()),  # GET Method
     path("plots/", views.PlotDisplay.as_view()),  # GET Method
     path("commercial/", views.CommercialDisplay.as_view()),  # GET Method
-    path("walkscore/", views.GetWalkscore.as_view()),  # GET Method
+    # path("walkscore/", views.GetWalkscore.as_view()),  # GET Method
     path(
         "CreateAd/", views.CreateAd.as_view()
     ),  # POST Method, Headers->Token, Body->Data

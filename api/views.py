@@ -58,22 +58,22 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 import json
 from rest_framework.views import APIView
-from walkscore import WalkScoreAPI
+# from walkscore import WalkScoreAPI
 
 ### Walkscore API
-class GetWalkscore(APIView):
-    def post(self, request):
-        api_key = "ffd1c56f9abcf84872116b4cc2dfcf31"
-        walkscore_api = WalkScoreAPI(api_key=api_key)
-        data = request.data
-        address = "New York City, USA"
-        result = walkscore_api.get_walk_score(
-            latitude=37.0902, longitude=95.7129, address=address
-        )
-        score = result.walk_score
-        print(result.transit_score)
-        print(result.bike_score)
-        return HttpResponse(result, score)
+# class GetWalkscore(APIView):
+#     def post(self, request):
+#         api_key = "ffd1c56f9abcf84872116b4cc2dfcf31"
+#         walkscore_api = WalkScoreAPI(api_key=api_key)
+#         data = request.data
+#         address = "New York City, USA"
+#         result = walkscore_api.get_walk_score(
+#             latitude=37.0902, longitude=95.7129, address=address
+#         )
+#         score = result.walk_score
+#         print(result.transit_score)
+#         print(result.bike_score)
+#         return HttpResponse(result, score)
 
 
 ### Prediction Model
